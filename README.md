@@ -1,5 +1,5 @@
 # DonorDrivePython
-A Python reference implementation of the Donor Drive API
+A Python reference implementation of the [Donor Drive API](https://github.com/DonorDrive/PublicAPI)
 
 This project aims to provide a Python package the user could import to create a project to access the Donor Drive API.
 
