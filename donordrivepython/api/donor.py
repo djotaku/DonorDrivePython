@@ -13,7 +13,7 @@ class Donor:
         """Load in values from class initialization.
 
 
-        :param json: JSON attributes from the API
+        :param json: JSON attributes from the api
         :type json: json
         """
         self._name, self._donor_id, self._image_url, self._amount, self._number_of_donations =\
@@ -26,7 +26,7 @@ class Donor:
 
     @property
     def donor_id(self) -> str:
-        """The ID assigned by the API (currently not used)."""
+        """The ID assigned by the api (currently not used)."""
         return self._donor_id
 
     @property
@@ -46,9 +46,9 @@ class Donor:
 
     @staticmethod
     def json_to_attributes(json_values):
-        """Convert API JSON values to Donor attributes.
+        """Convert api JSON values to Donor attributes.
 
-        :param json_values: JSON attributes from the API
+        :param json_values: JSON attributes from the api
         :type json_values: json
         """
         if json_values.get('displayName') is not None:

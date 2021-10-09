@@ -4,12 +4,11 @@ from rich import print
 from rich.logging import RichHandler
 from typing import Tuple, List
 
-import eldonationtracker.utils.extralife_io
-from eldonationtracker.utils import extralife_io as extralife_io
-from eldonationtracker import base_api_url
-from eldonationtracker.api.badge import Badge  # type: ignore
-from eldonationtracker.api.team_participant import TeamParticipant
-from eldonationtracker.api import donation as donation
+from donordrivepython.api import comms as donor_drive_comms
+from donordrivepython import base_api_url
+from donordrivepython.api.badge import Badge  # type: ignore
+from donordrivepython.api.team_participant import TeamParticipant
+from donordrivepython.api import donation as donation
 
 # logging
 team_log = logging.getLogger("Team:")
@@ -17,12 +16,12 @@ team_log.setLevel(logging.INFO)
 
 
 class Team:
-    """Hold Team API Data."""
+    """Hold Team api Data."""
 
     def __init__(self, team_id: str, output_folder: str, currency_symbol: str, donors_to_display: str):
         """Set the team variables.
 
-        :param team_id: The team's ID in the API
+        :param team_id: The team's ID in the api
         :type team_id: str
         :param output_folder: The folder for the output text files
         :type output_folder: str
@@ -59,13 +58,13 @@ class Team:
                                                  'Team_lastNDonationNameAmtsMessage': "No Donations Yet",
                                                  'Team_lastNDonationNameAmtsMessageHorizontal': "No Donations Yet",
                                                  'Team_lastNDonationNameAmtsHorizontal': "No Donations Yet"}
-        # other API endpoints
+        # other api endpoints
         self._badge_url: str = f"{self.team_url}/badges"
         self._badges: list[Badge] = []
 
     @property
     def team_id(self) -> str:
-        """The team's ID in the API."""
+        """The team's ID in the api."""
         return self._team_id
 
     @property
@@ -75,7 +74,7 @@ class Team:
 
     @property
     def team_url(self) -> str:
-        """URL to the team JSON API."""
+        """URL to the team JSON api."""
         return self._team_url
 
     @property
@@ -146,13 +145,12 @@ class Team:
 
         :returns: JSON values for fundraising goal, Captain's name, total value of donations, and the # of donations.
         """
-        team_json = extralife_io.get_json(self.team_url)
-        if not team_json:
-            team_log.warning("[bold magenta]Could not get team JSON[/bold magenta]")
-            return self.team_goal, self.team_captain, self.total_raised, self.num_donations, self.team_avatar_image
-        else:
+        team_json = donor_drive_comms.get_json(self.team_url)
+        if team_json:
             return team_json.get("fundraisingGoal"), team_json.get("captainDisplayName"), \
                    team_json.get("sumDonations"), team_json.get("numDonations"), team_json.get("avatarImageURL")
+        team_log.warning("[bold magenta]Could not get team JSON[/bold magenta]")
+        return self.team_goal, self.team_captain, self.total_raised, self.num_donations, self.team_avatar_image
 
     def _update_team_dictionary(self) -> None:
         self._team_info["Team_goal"] = f"{self.currency_symbol}{self.team_goal:,.2f}"
@@ -161,54 +159,45 @@ class Team:
         self._team_info["Team_numDonations"] = f"{self.num_donations}"
 
     def _get_participants(self, top5: bool) -> List[TeamParticipant]:
-        """Get team participant info from API.
+        """Get team participant info from api.
 
         Passes the JSON to the TeamParticipant class for parsing to create a team participant.
 
         :param top5: If true, get the list sorted by top sum of donations.
         :returns: A list of TeamParticipant objects.
         """
-        team_participant_json = extralife_io.get_json(self.team_participant_url, top5)
-        if not team_participant_json:
-            team_log.warning("[bold magenta]Couldn't get to URL or possibly no participants.[/bold magenta]")
-            if top5:
-                return self._top_5_participant_list
-            else:
-                return self._participant_list
-        else:
+        team_participant_json = donor_drive_comms.get_json(self.team_participant_url, top5)
+        if team_participant_json:
             return [TeamParticipant(participant) for participant in team_participant_json]
+        team_log.warning("[bold magenta]Couldn't get to URL or possibly no participants.[/bold magenta]")
+        if top5:
+            return self._top_5_participant_list
+        else:
+            return self._participant_list
 
     def _top_participant(self) -> str:
         """Get Top Team Participant.
 
-        This should just grab element 0 from self.top_5_participant_list instead of hitting API twice
+        This should just grab element 0 from self.top_5_participant_list instead of hitting api twice
 
         :returns: String formatted information about the top participant.
         """
-        if len(self._top_5_participant_list) == 0:
-            team_log.info("[bold blue] No participants[/bold blue] ")
-            return "No participants."
-        else:
+        if len(self._top_5_participant_list) != 0:
             return (f"{self._top_5_participant_list[0].name} - $"
                     f"{self._top_5_participant_list[0].amount:,.2f}")
+        team_log.info("[bold blue] No participants[/bold blue] ")
+        return "No participants."
 
     def _participant_calculations(self) -> None:
         self._participant_calculation_dict['Team_TopParticipantNameAmnt'] = self._top_participant()
         self._participant_calculation_dict['Team_Top5ParticipantsHorizontal'] = \
-            extralife_io.multiple_format(self._top_5_participant_list, False, True, self.currency_symbol, 5)
+            donor_drive_comms.multiple_format(self._top_5_participant_list, False, True, self.currency_symbol, 5)
         self._participant_calculation_dict['Team_Top5Participants'] = \
-            extralife_io.multiple_format(self._top_5_participant_list, False, False, self.currency_symbol, 5)
+            donor_drive_comms.multiple_format(self._top_5_participant_list, False, False, self.currency_symbol, 5)
 
     def _update_badges(self) -> None:
         """Add all our badges to the list."""
-        self._badges = extralife_io.get_badges(self.badge_url)
-
-    def write_text_files(self, dictionary: dict) -> None:  # pragma: no cover
-        """Write info to text files.
-
-        :param dictionary: The dictionary containing the values to write out to text files.
-        """
-        extralife_io.write_text_files(dictionary, self.output_folder)
+        self._badges = donor_drive_comms.get_badges(self.badge_url)
 
     def team_run(self) -> None:
         """A public method to update and output team and team participant info."""
@@ -219,31 +208,26 @@ class Team:
             self.donation_run()
 
     def team_api_info(self) -> None:
-        """Get team info from API."""
+        """Get team info from api."""
         self._team_goal, self._team_captain, self._total_raised, self._num_donations,\
             self._team_avatar_image = self._get_team_json()
         self._update_team_dictionary()
         self._update_badges()
-        self.write_text_files(self._team_info)
-        extralife_io.output_badge_data(self.badges, self.output_folder, team=True)
 
     def participant_run(self) -> None:  # pragma: no cover
         """Get and calculate team participant info."""
         self._participant_list = self._get_participants(top5=False)
         self._top_5_participant_list = self._get_participants(top5=True)
         self._participant_calculations()
-        self.write_text_files(self._participant_calculation_dict)
 
     def donation_run(self) -> None:  # pragma: no cover
         """Get and calculate donation information."""
-        self._donation_list = eldonationtracker.utils.extralife_io.get_donations(self._donation_list,
-                                                                                 self.team_donation_url)
+        self._donation_list = donor_drive_comms.get_donations(self._donation_list,
+                                                                                      self.team_donation_url)
         if self._donation_list:
-            self._donation_formatted_output = eldonationtracker.utils.extralife_io.format_information_for_output(
+            self._donation_formatted_output = donor_drive_comms.format_information_for_output(
                 self._donation_list, self.currency_symbol, self.donors_to_display, team=True)
-            self.write_text_files(self._donation_formatted_output)
             team_avatar_for_html = "<img src=" + self.team_avatar_image + ">"
-            extralife_io.write_html_files(team_avatar_for_html, 'Team_Avatar', self.output_folder)
 
     def __str__(self):
         team_info = ""

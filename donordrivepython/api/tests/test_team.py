@@ -43,7 +43,7 @@ def test_get_team_json_no_json():
         team_json = my_team._get_team_json()
         assert team_json == (0, '', 0, 0, '')
         # let's pretend that at some point values were added
-        # but now the API can't be reached. Let's make sure it doesn't over-write the good data.
+        # but now the api can't be reached. Let's make sure it doesn't over-write the good data.
         my_team._team_goal = 500
         my_team._team_captain = 'Captain Awesome'
         my_team._total_raised = 400
@@ -191,7 +191,7 @@ def test_top_participant():
 
 
 def test_participant_calculations_no_data():
-    """What if the API comes back empty? Maybe a team just formed without any members?"""
+    """What if the api comes back empty? Maybe a team just formed without any members?"""
     my_team = team.Team("12345", "folder", "$", "5")
     my_team._participant_calculations()
     assert my_team._participant_calculation_dict['Team_TopParticipantNameAmnt'] == "No participants."
@@ -267,7 +267,7 @@ fake_output_badge_data = mock.Mock()
 @mock.patch.object(team.Team, "write_text_files", fake_write_text_files)
 @mock.patch.object(team.Team, "donation_run", fake_donation_run)
 @mock.patch.object(team.Team, "_update_badges", fake_badge_run)
-@mock.patch.object(team.extralife_io, "output_badge_data", fake_output_badge_data)
+@mock.patch.object(team.donor_drive_comms, "output_badge_data", fake_output_badge_data)
 def test_team_api_info():
     my_team = team.Team("12345", "folder", "$", "5")
     my_team.team_api_info()

@@ -11,15 +11,14 @@ from typing import Tuple, Any
 
 import xdgenvpy  # type: ignore
 
-from eldonationtracker import api_version_suffix
-from eldonationtracker.api.donation import Donation
-from eldonationtracker.api.donor import Donor
-from eldonationtracker.api.badge import Badge  # type: ignore
+from donordrivepython import api_version_suffix
+from donordrivepython.api.donation import Donation
+from donordrivepython.api.donor import Donor
+from donordrivepython.api.badge import Badge  # type: ignore
 
 # logging
-LOG_FORMAT = '%(name)s: %(message)s'
-logging.basicConfig(level=logging.INFO, format=LOG_FORMAT, handlers=[RichHandler(markup=True, show_path=False)])
 el_io_log = logging.getLogger("ExtraLife IO")
+el_io_log.setLevel(logging.INFO)
 
 
 def validate_url(url: str):
@@ -33,16 +32,16 @@ def validate_url(url: str):
 def get_json(url: str, order_by_donations: bool = False, order_by_amount: bool = False) -> dict:
     """Grab JSON from server.
 
-    Connects to server and grabs JSON data from the specified URL. The API server should return JSON with the donation \
+    Connects to server and grabs JSON data from the specified URL. The api server should return JSON with the donation \
     data.
 
-    :param url: API URL for the specific json API point.
-    :param order_by_donations: If true, the url param has data appended that will cause the API to return the\
+    :param url: api URL for the specific json api point.
+    :param order_by_donations: If true, the url param has data appended that will cause the api to return the\
     data in descending order of the sum of donations.
-    :param order_by_amount: If true, the url param has data appended that will cause the API to return the\
+    :param order_by_amount: If true, the url param has data appended that will cause the api to return the\
     data in descending order of the sum of amounts.
 
-    :return: JSON as dictionary with API data.
+    :return: JSON as dictionary with api data.
 
     :raises: ConnectionError, Timeout
     """
@@ -52,8 +51,10 @@ def get_json(url: str, order_by_donations: bool = False, order_by_amount: bool =
         url += "?orderBy=sumDonations%20DESC"
     elif order_by_amount:
         url += "?orderBy=amount%20DESC"
-    try:
+    else:
         url += api_version_suffix
+    try:
+        el_io_log.debug(url)
         response = requests.get(url=url, headers=header)
         return response.json()  # type: ignore
     except requests.exceptions.ConnectionError as this_error:  # pragma: no cover
@@ -73,7 +74,7 @@ def get_json(url: str, order_by_donations: bool = False, order_by_amount: bool =
 def get_donations(donations_or_donors: list, api_url: str, is_donation=True, largest_first=False) -> list:
     """Get the donations from the JSON and create the donation objects.
 
-    If the API can't be reached, the same list is returned. Only new donations are added to the list at the end.
+    If the api can't be reached, the same list is returned. Only new donations are added to the list at the end.
 
     :param is_donation: True if we are getting data for donations. False if we are getting data for donors.
     :param largest_first: True if we want to sort by largest. False if sort by latest donors or donations.
@@ -103,9 +104,9 @@ def get_donations(donations_or_donors: list, api_url: str, is_donation=True, lar
 
 
 def get_badges(api_url: str) -> list[Badge]:
-    """Get badges from the API endpoint and create a list to return.
+    """Get badges from the api endpoint and create a list to return.
 
-    :param api_url: The URL for the API endpoint.
+    :param api_url: The URL for the api endpoint.
     :returns: A list of badges.
     """
     json_response = get_json(api_url)
@@ -126,7 +127,7 @@ class ParticipantConf:
 
     participant_conf_version: str = "2.0"
     version_mismatch: bool = False
-    fields: dict = {"extralife_id": None, "text_folder": None, "currency_symbol": None, "team_id": None,
+    fields: dict = {"donor_drive_id": None, "text_folder": None, "currency_symbol": None, "team_id": None,
                     "tracker_image": None, "donation_sound": None, "donors_to_display": None, "font_family": None,
                     "font_size": None, "font_italic": None, "font_bold": None, "font_color": None,
                     "tracker_background_color": None}
@@ -256,7 +257,7 @@ class ParticipantConf:
         :returns: A tuple of strings with config values needed if only\
         running on the commandline.
         """
-        return (self.fields["extralife_id"], self.fields["text_folder"],
+        return (self.fields["donor_drive_id"], self.fields["text_folder"],
                 self.fields["currency_symbol"],
                 self.fields["team_id"], self.fields["donors_to_display"])
 
@@ -272,7 +273,7 @@ class ParticipantConf:
         :returns: A tuple of strings with config values needed if only\
         running the GUI. The two background colors are lists.
         """
-        return (self.fields["extralife_id"], self.fields["text_folder"],
+        return (self.fields["donor_drive_id"], self.fields["text_folder"],
                 self.fields["currency_symbol"], self.fields["team_id"],
                 self.fields["tracker_image"], self.fields["donation_sound"],
                 self.fields["donors_to_display"], self.fields["font_family"], self.fields["font_size"],
@@ -412,65 +413,3 @@ def format_information_for_output(donation_list: list, currency_symbol: str, don
         multiple_format(donation_list, False, True, currency_symbol, int(donors_to_display))
     return donation_formatted_output
 
-
-def output_badge_data(badge_list: list[Badge], text_folder: str, team=False) -> None:  # pragma: no cover
-    """Write out text and HTML files for badge data."""
-    prefix = ''
-    if team:
-        prefix = "team_"
-    if badge_list:
-        badge_text_output = {}
-        badge_url_output = {}
-        for a_badge in badge_list:
-            badge_text_output[f"{prefix}{a_badge.badge_code}"] = f"{a_badge.title}: {a_badge.description}"
-            badge_url_output[f"{prefix}{a_badge.badge_code}"] = f"<img src='{a_badge.badge_image_url}'>"
-        badge_text_folder = f"{text_folder}badges/text/"
-        write_text_files(badge_text_output, badge_text_folder)
-        badge_image_folder = f"{text_folder}badges/images/"
-        for badge_image_filename, badge_image_url in badge_url_output.items():
-            write_html_files(badge_image_url, badge_image_filename, badge_image_folder)
-
-
-def read_in_total_raised(text_folder: str) -> str:
-    """This is a temporary hack until I resolve Github issue #162"""
-    try:
-        with open(f'{text_folder}/totalRaised.txt', 'r', encoding='utf8') as total_raised:
-            return total_raised.readline()
-    except FileNotFoundError:
-        el_io_log.info("[bold blue] totalRaised.txt doesn't exist. This is OK if this is your first run. [/bold blue]")
-        return ""
-
-
-# Output
-def write_text_files(dictionary: dict, text_folder: str):
-    """Write info to text files.
-
-    The dictionary key will become the filename and the values will\
-    be the content of the files.
-
-    :param dictionary: The dictionary with items to output.
-    :param text_folder: The directory to write the text files.
-    """
-    try:
-        os.makedirs(text_folder)
-    except FileExistsError:
-        pass
-    for filename, text in dictionary.items():
-        with open(f'{text_folder}/{filename}.txt', 'w', encoding='utf8') as file:
-            file.write(text)
-
-
-def write_html_files(data: str, filename: str, text_folder: str):
-    """Write data to an HTML file.
-
-    :param data: The data to write to an HTML file.
-    :param filename: The filename for the HTML file.
-    :param text_folder: The directory to write the HTML files to.
-    """
-    try:
-        os.mkdir(text_folder)
-    except FileExistsError:
-        pass
-    html_to_write = "<HTML><body>" + data + "</body></HTML>"
-    with open(f'{text_folder}/{filename}.html', 'w', encoding='utf8') as html_file:
-        html_file.write(html_to_write)

@@ -1,4 +1,4 @@
-from eldonationtracker.api import donor as donor
+from donordrivepython.api import donor as donor
 
 
 class TeamParticipant(donor.Donor):
@@ -7,7 +7,7 @@ class TeamParticipant(donor.Donor):
     Inherits from the donor class, but
     over-rides the json_to_attributes function.
 
-    API variables:
+    api variables:
 
     :param self.name: participant's name
     :param self.amount: the sum of all donations by this participant
