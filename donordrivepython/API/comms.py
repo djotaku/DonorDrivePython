@@ -17,9 +17,8 @@ from eldonationtracker.api.donor import Donor
 from eldonationtracker.api.badge import Badge  # type: ignore
 
 # logging
-LOG_FORMAT = '%(name)s: %(message)s'
-logging.basicConfig(level=logging.INFO, format=LOG_FORMAT, handlers=[RichHandler(markup=True, show_path=False)])
 el_io_log = logging.getLogger("ExtraLife IO")
+el_io_log.setLevel(logging.INFO)
 
 
 def validate_url(url: str):
@@ -52,8 +51,10 @@ def get_json(url: str, order_by_donations: bool = False, order_by_amount: bool =
         url += "?orderBy=sumDonations%20DESC"
     elif order_by_amount:
         url += "?orderBy=amount%20DESC"
-    try:
+    else:
         url += api_version_suffix
+    try:
+        el_io_log.debug(url)
         response = requests.get(url=url, headers=header)
         return response.json()  # type: ignore
     except requests.exceptions.ConnectionError as this_error:  # pragma: no cover
@@ -412,65 +413,3 @@ def format_information_for_output(donation_list: list, currency_symbol: str, don
         multiple_format(donation_list, False, True, currency_symbol, int(donors_to_display))
     return donation_formatted_output
 
-
-def output_badge_data(badge_list: list[Badge], text_folder: str, team=False) -> None:  # pragma: no cover
-    """Write out text and HTML files for badge data."""
-    prefix = ''
-    if team:
-        prefix = "team_"
-    if badge_list:
-        badge_text_output = {}
-        badge_url_output = {}
-        for a_badge in badge_list:
-            badge_text_output[f"{prefix}{a_badge.badge_code}"] = f"{a_badge.title}: {a_badge.description}"
-            badge_url_output[f"{prefix}{a_badge.badge_code}"] = f"<img src='{a_badge.badge_image_url}'>"
-        badge_text_folder = f"{text_folder}badges/text/"
-        write_text_files(badge_text_output, badge_text_folder)
-        badge_image_folder = f"{text_folder}badges/images/"
-        for badge_image_filename, badge_image_url in badge_url_output.items():
-            write_html_files(badge_image_url, badge_image_filename, badge_image_folder)
-
-
-def read_in_total_raised(text_folder: str) -> str:
-    """This is a temporary hack until I resolve Github issue #162"""
-    try:
-        with open(f'{text_folder}/totalRaised.txt', 'r', encoding='utf8') as total_raised:
-            return total_raised.readline()
-    except FileNotFoundError:
-        el_io_log.info("[bold blue] totalRaised.txt doesn't exist. This is OK if this is your first run. [/bold blue]")
-        return ""
-
-
-# Output
-def write_text_files(dictionary: dict, text_folder: str):
-    """Write info to text files.
-
-    The dictionary key will become the filename and the values will\
-    be the content of the files.
-
-    :param dictionary: The dictionary with items to output.
-    :param text_folder: The directory to write the text files.
-    """
-    try:
-        os.makedirs(text_folder)
-    except FileExistsError:
-        pass
-    for filename, text in dictionary.items():
-        with open(f'{text_folder}/{filename}.txt', 'w', encoding='utf8') as file:
-            file.write(text)
-
-
-def write_html_files(data: str, filename: str, text_folder: str):
-    """Write data to an HTML file.
-
-    :param data: The data to write to an HTML file.
-    :param filename: The filename for the HTML file.
-    :param text_folder: The directory to write the HTML files to.
-    """
-    try:
-        os.mkdir(text_folder)
-    except FileExistsError:
-        pass
-    html_to_write = "<HTML><body>" + data + "</body></HTML>"
-    with open(f'{text_folder}/{filename}.html', 'w', encoding='utf8') as html_file:
-        html_file.write(html_to_write)
