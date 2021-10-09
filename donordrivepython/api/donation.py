@@ -11,7 +11,7 @@ class Donation:
     def __init__(self, json):
         """Load in values from class initialization.
 
-        :param json: JSON attributes from the API
+        :param json: JSON attributes from the api
         :type json: json
         """
         self._name, self._message, self._amount, self._donor_id, self._avatar_url, self._donation_date,\
@@ -55,9 +55,9 @@ class Donation:
 
     @staticmethod
     def json_to_attributes(json):
-        """Convert API JSON values to Donation attributes.
+        """Convert api JSON values to Donation attributes.
 
-        :param json: JSON attributes from the API
+        :param json: JSON attributes from the api
         :type json: json
         """
         if json.get('displayName') is not None:

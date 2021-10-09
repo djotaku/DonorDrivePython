@@ -11,10 +11,10 @@ from typing import Tuple, Any
 
 import xdgenvpy  # type: ignore
 
-from eldonationtracker import api_version_suffix
-from eldonationtracker.api.donation import Donation
-from eldonationtracker.api.donor import Donor
-from eldonationtracker.api.badge import Badge  # type: ignore
+from donordrivepython import api_version_suffix
+from donordrivepython.api.donation import Donation
+from donordrivepython.api.donor import Donor
+from donordrivepython.api.badge import Badge  # type: ignore
 
 # logging
 el_io_log = logging.getLogger("ExtraLife IO")
@@ -32,16 +32,16 @@ def validate_url(url: str):
 def get_json(url: str, order_by_donations: bool = False, order_by_amount: bool = False) -> dict:
     """Grab JSON from server.
 
-    Connects to server and grabs JSON data from the specified URL. The API server should return JSON with the donation \
+    Connects to server and grabs JSON data from the specified URL. The api server should return JSON with the donation \
     data.
 
-    :param url: API URL for the specific json API point.
-    :param order_by_donations: If true, the url param has data appended that will cause the API to return the\
+    :param url: api URL for the specific json api point.
+    :param order_by_donations: If true, the url param has data appended that will cause the api to return the\
     data in descending order of the sum of donations.
-    :param order_by_amount: If true, the url param has data appended that will cause the API to return the\
+    :param order_by_amount: If true, the url param has data appended that will cause the api to return the\
     data in descending order of the sum of amounts.
 
-    :return: JSON as dictionary with API data.
+    :return: JSON as dictionary with api data.
 
     :raises: ConnectionError, Timeout
     """
@@ -74,7 +74,7 @@ def get_json(url: str, order_by_donations: bool = False, order_by_amount: bool =
 def get_donations(donations_or_donors: list, api_url: str, is_donation=True, largest_first=False) -> list:
     """Get the donations from the JSON and create the donation objects.
 
-    If the API can't be reached, the same list is returned. Only new donations are added to the list at the end.
+    If the api can't be reached, the same list is returned. Only new donations are added to the list at the end.
 
     :param is_donation: True if we are getting data for donations. False if we are getting data for donors.
     :param largest_first: True if we want to sort by largest. False if sort by latest donors or donations.
@@ -104,9 +104,9 @@ def get_donations(donations_or_donors: list, api_url: str, is_donation=True, lar
 
 
 def get_badges(api_url: str) -> list[Badge]:
-    """Get badges from the API endpoint and create a list to return.
+    """Get badges from the api endpoint and create a list to return.
 
-    :param api_url: The URL for the API endpoint.
+    :param api_url: The URL for the api endpoint.
     :returns: A list of badges.
     """
     json_response = get_json(api_url)
@@ -127,7 +127,7 @@ class ParticipantConf:
 
     participant_conf_version: str = "2.0"
     version_mismatch: bool = False
-    fields: dict = {"extralife_id": None, "text_folder": None, "currency_symbol": None, "team_id": None,
+    fields: dict = {"donor_drive_id": None, "text_folder": None, "currency_symbol": None, "team_id": None,
                     "tracker_image": None, "donation_sound": None, "donors_to_display": None, "font_family": None,
                     "font_size": None, "font_italic": None, "font_bold": None, "font_color": None,
                     "tracker_background_color": None}
@@ -257,7 +257,7 @@ class ParticipantConf:
         :returns: A tuple of strings with config values needed if only\
         running on the commandline.
         """
-        return (self.fields["extralife_id"], self.fields["text_folder"],
+        return (self.fields["donor_drive_id"], self.fields["text_folder"],
                 self.fields["currency_symbol"],
                 self.fields["team_id"], self.fields["donors_to_display"])
 
@@ -273,7 +273,7 @@ class ParticipantConf:
         :returns: A tuple of strings with config values needed if only\
         running the GUI. The two background colors are lists.
         """
-        return (self.fields["extralife_id"], self.fields["text_folder"],
+        return (self.fields["donor_drive_id"], self.fields["text_folder"],
                 self.fields["currency_symbol"], self.fields["team_id"],
                 self.fields["tracker_image"], self.fields["donation_sound"],
                 self.fields["donors_to_display"], self.fields["font_family"], self.fields["font_size"],

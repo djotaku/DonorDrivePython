@@ -7,7 +7,7 @@ from dataclasses import dataclass
 class Badge:
     """Achievement Badges associated with a Participant or Team.
 
-    For Donor Drive API information: https://github.com/DonorDrive/PublicAPI/blob/master/resources/badges.md
+    For Donor Drive api information: https://github.com/DonorDrive/PublicAPI/blob/master/resources/badges.md
 
     :param badge_code: A unique identifier for this badge.
     :type: str
