@@ -5,7 +5,6 @@ from rich.logging import RichHandler
 from typing import Tuple, List
 
 from donordrivepython.api import comms as donor_drive_comms
-from donordrivepython import base_api_url
 from donordrivepython.api.badge import Badge  # type: ignore
 from donordrivepython.api.team_participant import TeamParticipant
 from donordrivepython.api import donation as donation
@@ -18,7 +17,8 @@ team_log.setLevel(logging.INFO)
 class Team:
     """Hold Team api Data."""
 
-    def __init__(self, team_id: str, output_folder: str, currency_symbol: str, donors_to_display: str):
+    def __init__(self, team_id: str, output_folder: str, currency_symbol: str, donors_to_display: str,
+                 base_api_url: str):
         """Set the team variables.
 
         :param team_id: The team's ID in the api

@@ -8,7 +8,6 @@ import time
 
 from donordrivepython.api import donor as donor, team as team, donation as donation, badge
 from donordrivepython.api import comms as donor_drive_comms
-from donordrivepython import base_api_url
 
 # logging
 participant_log = logging.getLogger("Participant")
@@ -23,7 +22,8 @@ class Participant:
     Donor Drive api api info at https://github.com/DonorDrive/PublicAPI
     """
 
-    def __init__(self, donor_drive_id, text_folder, currency_symbol, team_id, donors_to_display):
+    def __init__(self, donor_drive_id: str, text_folder: str, currency_symbol: str, team_id: str,
+                 donors_to_display: str, base_api_url: str):
         """Load in config from participant.conf and initialize participant variables.
         """
         self._donor_drive_id: str = donor_drive_id
@@ -31,6 +31,7 @@ class Participant:
         self._currency_symbol: str = currency_symbol
         self._team_id: str = team_id
         self._donors_to_display: str = donors_to_display
+        self._base_api_url: str = base_api_url
         self._participant_url: str = ""
         self._donation_url: str = ""
         self._participant_donor_url: str = ""
@@ -261,7 +262,7 @@ class Participant:
     def set_config_values(self) -> None:
         """Set participant values, create URLs, and create Team."""
         # urls
-        self._participant_url = f"{base_api_url}/participants/{self.donor_drive_id}"
+        self._participant_url = f"{self._base_api_url}/participants/{self.donor_drive_id}"
         self._donation_url = f"{self.participant_url}/donations"
         self._participant_donor_url = f"{self.participant_url}/donors"
         self._badge_url = f"{self.participant_url}/badges"
@@ -269,7 +270,8 @@ class Participant:
         self._incentive_url = f"{self.participant_url}/incentives"
 
         if self.team_id:
-            self._my_team = team.Team(self.team_id, self.text_folder, self.currency_symbol, self.donors_to_display)
+            self._my_team = team.Team(self.team_id, self.text_folder, self.currency_symbol, self.donors_to_display,
+                                      self._base_api_url)
 
     def _get_participant_info(self):
         """Get JSON data for participant information.
