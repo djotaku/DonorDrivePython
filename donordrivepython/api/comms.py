@@ -69,6 +69,9 @@ def get_json(url: str, order_by_donations: bool = False, order_by_amount: bool =
         el_io_log.error(f"[bold red]HTTP code: {response.status_code}[/bold red]")  # type: ignore
         el_io_log.error("[bold red]Timed out while getting JSON. [/bold red]")
         return {}
+    except json.decoder.JSONDecodeError:  # pragma: no cover
+        el_io_log.error("[bold red]Error with JSON response. [/bold red]")
+        return {}
 
 
 def get_donations(donations_or_donors: list, api_url: str, is_donation=True, largest_first=False) -> list:
