@@ -48,11 +48,11 @@ def get_json(url: str, order_by_donations: bool = False, order_by_amount: bool =
     header = {'User-Agent': 'Extra Life Donation Tracker'}
     response = None
     if order_by_donations and not order_by_amount:
-        url += "?orderBy=sumDonations%20DESC"
+        url += f"?orderBy=sumDonations%20DESC&{api_version_suffix}"
     elif order_by_amount:
-        url += "?orderBy=amount%20DESC"
+        url += f"?orderBy=amount%20DESC&{api_version_suffix}"
     else:
-        url += api_version_suffix
+        url += f"?{api_version_suffix}"
     try:
         el_io_log.debug(url)
         response = requests.get(url=url, headers=header)
