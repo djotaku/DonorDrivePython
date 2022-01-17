@@ -72,6 +72,7 @@ def get_json(url: str, order_by_donations: bool = False, order_by_amount: bool =
     except json.decoder.JSONDecodeError:  # pragma: no cover
         el_io_log.error("[bold red]Error with JSON response. [/bold red]")
         el_io_log.error(f"[bold red]The request status code was {response.status_code} from {url=}[/bold red]")
+        el_io_log.error(f"[bold red]Message from server was {response.text} from {url=}[/bold red]")
         return {}
 
 
