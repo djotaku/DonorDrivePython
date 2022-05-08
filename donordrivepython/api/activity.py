@@ -31,7 +31,7 @@ class DonationActivity(Activity):
 class BadgeActivity(Activity):
     """"Badge Activity"""
 
-    def __int__(self, created_date, image_url, message, title, type):
+    def __init__(self, created_date, image_url, message, title, type):
         super().__init__(created_date, image_url, type)
         self.message: str = message
         self.title: str = title
