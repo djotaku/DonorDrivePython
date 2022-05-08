@@ -15,8 +15,8 @@ class Activity:
 class DonationActivity(Activity):
     """A donation activity"""
 
-    def __init__(self, amount, createed_date, image_url, is_incentive, message, title, type):
-        super().__init__(createed_date, image_url, type)
+    def __init__(self, amount, created_date, image_url, is_incentive, message, title, type):
+        super().__init__(created_date, image_url, type)
         self.amount: float = amount
         self.is_incentive: Bool = is_incentive
         self.message: str = message
