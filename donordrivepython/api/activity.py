@@ -22,7 +22,6 @@ class DonationActivity(Activity):
         self.message: str = message
         self.title: str = title
 
-
     def __str__(self):
         if self.is_incentive:
             return f"Incentive reached: {self.message} with {self.title} donation of ${self.amount}."
@@ -31,11 +30,11 @@ class DonationActivity(Activity):
 
 class BadgeActivity(Activity):
     """"Badge Activity"""
+
     def __int__(self, created_date, image_url, message, title, type):
         super().__init__(created_date, image_url, type)
         self.message: str = message
         self.title: str = title
-
 
     def __str__(self):
         return f"{self.message}, {self.title} badge earned!!"
@@ -55,6 +54,6 @@ def create_activity(json_data: dict):
     if type == "donation":
         return DonationActivity(amount, created_date, image_url, is_incentive, message, title, type)
     elif type == "participantBadge" or "teamBadge":
-        return BadgeActivity(created_date, image_url, message)#, title, type,)
+        return BadgeActivity(created_date, image_url, message , title, type,)
     else:
         return Activity(created_date, image_url, type)
