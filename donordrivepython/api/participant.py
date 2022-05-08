@@ -1,4 +1,4 @@
-"""Grabs Participant JSON data and outputs to files."""
+"""Participant class to store participant data."""
 
 from dataclasses import dataclass, field
 import logging
