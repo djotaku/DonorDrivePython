@@ -414,8 +414,9 @@ class Participant:
 
     def _update_activities(self) -> None:
         """Add Participant Activities to list"""
-        json_resopnse = donor_drive_comms.get_json(self._activity_url)
-        self._activities = [activity.create_activity(item) for item in json_resopnse]
+        json_response = donor_drive_comms.get_json(self._activity_url)
+        print(json_response)
+        self._activities = [activity.create_activity(item) for item in json_response]
 
     def run(self) -> None:
         """Run to get participant, donation, donor, and team data and output to text files."""
@@ -529,5 +530,6 @@ if __name__ == "__main__":  # pragma: no cover
     print(p)
     while True:
         p.run()
-        print(p.activities)
+        for an_activity in p.activities:
+            print(f"{an_activity}\n")
         time.sleep(15)

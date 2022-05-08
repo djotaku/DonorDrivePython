@@ -37,7 +37,7 @@ class BadgeActivity(Activity):
         self.title: str = title
 
     def __str__(self):
-        return f"{self.message}, {self.title} badge earned!!"
+        return f"{self.message}: '{self.title}' badge earned!!"
 
 
 def create_activity(json_data: dict):
