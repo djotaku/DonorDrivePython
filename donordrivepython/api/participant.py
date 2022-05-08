@@ -6,7 +6,7 @@ from rich import print  # type ignore
 from rich.logging import RichHandler  # type ignore
 import time
 
-from donordrivepython.api import donor as donor, team as team, donation as donation, badge
+from donordrivepython.api import donor, team, donation, badge, activity
 from donordrivepython.api import comms as donor_drive_comms
 
 # logging
@@ -86,6 +86,8 @@ class Participant:
         self._milestones: list[Milestone] = []
         self._incentive_url: str = ''
         self._incentives: list[Incentive] = []
+        self._activity_url: str = ''
+        self._activities: list[activity.Activity] = []
 
         # misc
         self._first_run: bool = True
@@ -259,6 +261,11 @@ class Participant:
         """Return a list of Incentives"""
         return self._incentives
 
+    @property
+    def activities(self):
+        """Return a list of Activities"""
+        return self._activities
+
     def set_config_values(self) -> None:
         """Set participant values, create URLs, and create Team."""
         # urls
@@ -268,6 +275,7 @@ class Participant:
         self._badge_url = f"{self.participant_url}/badges"
         self._milestone_url = f"{self.participant_url}/milestones"
         self._incentive_url = f"{self.participant_url}/incentives"
+        self._activity_url = f"{self.participant_url}/activity"
 
         if self.team_id:
             self._my_team = team.Team(self.team_id, self.text_folder, self.currency_symbol, self.donors_to_display,
@@ -404,11 +412,17 @@ class Participant:
         json_response = donor_drive_comms.get_json(self.incentive_url)
         self._incentives = [Incentive.create_incentive(incentive) for incentive in json_response]
 
+    def _update_activities(self) -> None:
+        """Add Participant Activities to list"""
+        json_resopnse = donor_drive_comms.get_json(self._activity_url)
+        self._activities = [activity.create_activity(item) for item in json_resopnse]
+
     def run(self) -> None:
         """Run to get participant, donation, donor, and team data and output to text files."""
         number_of_donations = self.number_of_donations
         self.update_participant_attributes()
         self._update_incentives()
+        self._update_activities()
         # Below is protection against a situation where the api is unavailable.
         # Prevents bad data being written to the participant output. Based on the assumption that it would
         # absurd to have a goal of $0.
@@ -508,7 +522,12 @@ class Incentive:  # type: ignore
 
 if __name__ == "__main__":  # pragma: no cover
     participant_conf = donor_drive_comms.ParticipantConf()
-    p = Participant(participant_conf)
+    print(participant_conf)
+    (extralife_id, text_folder, currency_symbol, team_id, donors_to_display) = participant_conf.get_cli_values()
+    p = Participant("478153", text_folder, currency_symbol, team_id, donors_to_display,
+                    "https://www.extra-life.org/api")
+    print(p)
     while True:
         p.run()
+        print(p.activities)
         time.sleep(15)

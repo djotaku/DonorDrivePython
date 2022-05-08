@@ -7,7 +7,7 @@ from typing import Tuple, List
 from donordrivepython.api import comms as donor_drive_comms
 from donordrivepython.api.badge import Badge  # type: ignore
 from donordrivepython.api.team_participant import TeamParticipant
-from donordrivepython.api import donation as donation
+from donordrivepython.api import donation, activity
 
 # logging
 team_log = logging.getLogger("Team:")
@@ -61,6 +61,8 @@ class Team:
         # other api endpoints
         self._badge_url: str = f"{self.team_url}/badges"
         self._badges: list[Badge] = []
+        self._activity_url: str = f"{self.team_url}/activity"
+        self._activity_list: list[activity.Activity] = []
 
     @property
     def team_id(self) -> str:
@@ -140,6 +142,11 @@ class Team:
         """Return the list of Team's badges."""
         return self._badges
 
+    @property
+    def actvitiy_list(self) -> list[activity.Activity]:
+        """Return list of team activities"""
+        return self._activity_list
+
     def _get_team_json(self) -> Tuple:
         """Get team info from JSON api.
 
@@ -198,6 +205,10 @@ class Team:
     def _update_badges(self) -> None:
         """Add all our badges to the list."""
         self._badges = donor_drive_comms.get_badges(self.badge_url)
+        
+    def _update_activities(self) -> None:
+        """Add activities to the list"""
+        self._activity_list = donor_drive_comms.get_activities(self._activity_url)
 
     def team_run(self) -> None:
         """A public method to update and output team and team participant info."""

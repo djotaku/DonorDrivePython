@@ -15,6 +15,7 @@ from donordrivepython import api_version_suffix
 from donordrivepython.api.donation import Donation
 from donordrivepython.api.donor import Donor
 from donordrivepython.api.badge import Badge  # type: ignore
+from donordrivepython.api import activity # type: ignore
 
 # logging
 el_io_log = logging.getLogger("ExtraLife IO")
@@ -117,6 +118,11 @@ def get_badges(api_url: str) -> list[Badge]:
     json_response = get_json(api_url)
     return [Badge.create_badge(badge_item) for badge_item in json_response]
 
+
+def get_activities(api_url: str) -> list[activity.Activity]:
+    """Get activities from the api endpiont and create a list to return."""
+    json_response = get_json(api_url)
+    return [activity.create_activity(activity) for activity in json_response]
 
 # File Input and Output
 # input
