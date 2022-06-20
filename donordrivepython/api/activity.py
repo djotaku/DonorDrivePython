@@ -1,3 +1,6 @@
+from datetime import datetime
+from tzlocal import get_localzone
+
 # type: ignore
 
 """Activities from the Activity Endpoint."""
@@ -10,6 +13,16 @@ class Activity:
         self.created_date: str = created_date
         self.image_url: str = image_url
         self.type: str = type
+
+    def better_date(self):
+        """Convert the date to a prettier format."""
+        my_time_zone = get_localzone()
+        date_and_time_of_activity_utc = datetime.strptime(self.created_date, '%Y-%m-%dT%H:%M:%S.%f%z')
+        date_and_time_of_activity_my_time_zone = date_and_time_of_activity_utc.astimezone(my_time_zone)
+        pretty_date_time = date_and_time_of_activity_my_time_zone.strftime('%x - %X')
+        return pretty_date_time
+    def __str__(self):
+        return f"{self.better_date()} - An activity of type {self.type} created "
 
 
 class DonationActivity(Activity):
@@ -24,8 +37,8 @@ class DonationActivity(Activity):
 
     def __str__(self):
         if self.is_incentive:
-            return f"Incentive reached: {self.message} with {self.title} donation of ${self.amount}."
-        return f"{self.title} donation in the amount of ${self.amount}."
+            return f"{self.better_date()} - Incentive reached: {self.message} with {self.title} donation of ${self.amount}."
+        return f"{self.better_date()}- {self.title} donation in the amount of ${self.amount}."
 
 
 class BadgeActivity(Activity):
@@ -37,7 +50,7 @@ class BadgeActivity(Activity):
         self.title: str = title
 
     def __str__(self):
-        return f"{self.message}: '{self.title}' badge earned!!"
+        return f"{self.better_date()}- {self.message}: '{self.title}' badge earned!!"
 
 
 def create_activity(json_data: dict):

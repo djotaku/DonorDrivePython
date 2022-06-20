@@ -415,7 +415,6 @@ class Participant:
     def _update_activities(self) -> None:
         """Add Participant Activities to list"""
         json_response = donor_drive_comms.get_json(self._activity_url)
-        print(json_response)
         self._activities = [activity.create_activity(item) for item in json_response]
 
     def run(self) -> None:
