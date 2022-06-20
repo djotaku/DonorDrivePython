@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "DonorDrivePython"
-version = "1.4.0"
+version = "1.4.1"
 description = "A utility to access the DonorDrive API"
 license = "GPL-3.0-or-later"
 authors = ["Eric Mesa <ericsbinaryworld@gmail.com>"]
@@ -8,7 +8,7 @@ readme = "README.rst"
 repository = "https://github.com/djotaku/DonorDrivePython"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 rich = "^12.4.0"
 requests = "2.27.1"
 xdgenvpy = "^2.3.5"
