@@ -12,6 +12,7 @@ python = "^3.10"
 rich = "^12.4.0"
 requests = "2.27.1"
 xdgenvpy = "^2.3.5"
+tzlocal = "^4.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
