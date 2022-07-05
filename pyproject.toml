@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "DonorDrivePython"
-version = "1.4.1"
+version = "1.4.2"
 description = "A utility to access the DonorDrive API"
 license = "GPL-3.0-or-later"
 authors = ["Eric Mesa <ericsbinaryworld@gmail.com>"]
