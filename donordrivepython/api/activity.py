@@ -1,5 +1,4 @@
 from datetime import datetime
-from tzlocal import get_localzone
 
 # type: ignore
 
@@ -16,7 +15,7 @@ class Activity:
 
     def better_date(self):
         """Convert the date to a prettier format."""
-        my_time_zone = get_localzone()
+        my_time_zone = datetime.now().astimezone().tzinfo
         date_and_time_of_activity_utc = datetime.strptime(self.created_date, '%Y-%m-%dT%H:%M:%S.%f%z')
         date_and_time_of_activity_my_time_zone = date_and_time_of_activity_utc.astimezone(my_time_zone)
         pretty_date_time = date_and_time_of_activity_my_time_zone.strftime('%x - %X')
