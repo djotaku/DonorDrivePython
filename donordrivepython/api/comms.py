@@ -122,7 +122,7 @@ def get_badges(api_url: str) -> list[Badge]:
 def get_activities(api_url: str) -> list[activity.Activity]:
     """Get activities from the api endpiont and create a list to return."""
     json_response = get_json(api_url)
-    return [activity.create_activity(activity) for activity in json_response]
+    return [activity.create_activity(activity_item) for activity_item in json_response]
 
 # File Input and Output
 # input
