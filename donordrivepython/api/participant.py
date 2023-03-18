@@ -62,22 +62,22 @@ class Participant:
         self._donation_list: list[donation] = []
         self._ordered_donation_list: list[donation] = []
         self._top_donation = None
-        self._top_donation_formatted_output: dict = {'TopDonationNameAmnt': "No Donations Yet"}
-        self._donation_formatted_output: dict = {'LastDonationNameAmnt': "No Donations Yet",
-                                                 'lastNDonationNameAmts': "No Donations Yet",
-                                                 'lastNDonationNameAmtsMessage': "No Donations Yet",
-                                                 'lastNDonationNameAmtsMessageHorizontal': "No Donations Yet",
-                                                 'lastNDonationNameAmtsHorizontal': "No Donations Yet"}
+        self._top_donation_formatted_output: dict = {'TopDonationNameAmnt': "No Donations Yet "}
+        self._donation_formatted_output: dict = {'LastDonationNameAmnt': "No Donations Yet ",
+                                                 'lastNDonationNameAmts': "No Donations Yet ",
+                                                 'lastNDonationNameAmtsMessage': "No Donations Yet ",
+                                                 'lastNDonationNameAmtsMessageHorizontal': "No Donations Yet ",
+                                                 'lastNDonationNameAmtsHorizontal': "No Donations Yet "}
         # donor information
         self._top_donor = None
-        self._top_donor_formatted_output: dict = {'TopDonorNameAmnt': "No Donors Yet"}
+        self._top_donor_formatted_output: dict = {'TopDonorNameAmnt': "No Donors Yet "}
         self._donor_list: list[donor] = []
         self._ordered_donor_list: list[donor] = []
-        self._donor_formatted_output: dict = {'LastDonorNameAmnt': "No Donations Yet",
-                                              'lastNDonorNameAmts': "No Donations Yet",
-                                              'lastNDonorNameAmtsMessage': "No Donations Yet",
-                                              'lastNDonorNameAmtsMessageHorizontal': "No Donations Yet",
-                                              'lastNDonorNameAmtsHorizontal': "No Donations Yet"}
+        self._donor_formatted_output: dict = {'LastDonorNameAmnt': "No Donations Yet ",
+                                              'lastNDonorNameAmts': "No Donations Yet ",
+                                              'lastNDonorNameAmtsMessage': "No Donations Yet ",
+                                              'lastNDonorNameAmtsMessageHorizontal': "No Donations Yet ",
+                                              'lastNDonorNameAmtsHorizontal': "No Donations Yet "}
 
         # other api endpoints
         self._badge_url: str = ''
