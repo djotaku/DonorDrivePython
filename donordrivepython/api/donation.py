@@ -64,7 +64,7 @@ class Donation:
             name = json.get('displayName')
         else:
             name = "Anonymous"
-        message = json.get('message')
+        message = json.get('message') if json.get('message') is not None else ""
         amount = json.get('amount') if json.get('amount') is not None else 0
         donor_id = json.get('donorID')
         avatar_url = json.get('avatarImageURL')
