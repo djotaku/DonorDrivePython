@@ -1,3 +1,3 @@
-__version__ = '1.6.0'
+__version__ = '2.0.0'
 
-api_version_suffix: str = "version=1.2"
+api_version_suffix: str = "version=1.6"

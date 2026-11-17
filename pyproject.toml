@@ -1,6 +1,6 @@
 [project]
 name = "DonorDrivePython"
-version = "1.6.0"
+version = "2.0.0"
 description = "A utility to access the DonorDrive API"
 license = "GPL-3.0-or-later"
 authors = [{ name = "Eric Mesa", email = "ericsbinaryworld@gmail.com" }]
