@@ -1,21 +1,26 @@
-[tool.poetry]
+[project]
 name = "DonorDrivePython"
 version = "1.6.0"
 description = "A utility to access the DonorDrive API"
 license = "GPL-3.0-or-later"
-authors = ["Eric Mesa <ericsbinaryworld@gmail.com>"]
+authors = [{ name = "Eric Mesa", email = "ericsbinaryworld@gmail.com" }]
 readme = "README.rst"
-repository = "https://github.com/djotaku/DonorDrivePython"
+requires-python = ">=3.10,<4.0"
+dependencies = [
+    "rich>=12.4.4,<13.0.0",
+    "requests==2.28.1",
+    "xdgenvpy>=2.3.5,<3.0.0",
+]
 
-[tool.poetry.dependencies]
-python = "^3.10"
-rich = "^12.4.4"
-requests = "2.28.1"
-xdgenvpy = "^2.3.5"
+[project.urls]
+Repository = "https://github.com/djotaku/DonorDrivePython"
 
-[tool.poetry.dev-dependencies]
-pytest = "^6.2.5"
+[dependency-groups]
+dev = ["pytest>=6.2.5,<7.0.0"]
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["donordrivepython"]
